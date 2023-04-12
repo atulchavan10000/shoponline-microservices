@@ -1,0 +1,25 @@
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Maven files
+target/
+
+# Gradle files
+build/
+.gradle/
+
+# Spring Boot files
+spring-boot-starter-parent/
+
+# Logs
+log/
+
+# Compiled class file
+*.class
+
+# Compiled build folder
+build/
