@@ -23,7 +23,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
-    public void placeOrder(OrderRequest orderRequest){
+    public String placeOrder(OrderRequest orderRequest){
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
 
@@ -49,6 +49,7 @@ public class OrderService {
 
         if(allProductsInStock) { // order will be placed only if all the products are in stock
            orderRepository.save(order);
+           return "Order Placed Successfully!";
        }else{
            throw new IllegalArgumentException("Product is out of stock, please try again later");
        }
