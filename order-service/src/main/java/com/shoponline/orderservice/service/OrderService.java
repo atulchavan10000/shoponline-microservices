@@ -4,6 +4,7 @@ package com.shoponline.orderservice.service;
 import com.shoponline.orderservice.dto.InventoryResponse;
 import com.shoponline.orderservice.dto.OrderLineItemsDto;
 import com.shoponline.orderservice.dto.OrderRequest;
+import com.shoponline.orderservice.event.OrderPlacedEvent;
 import com.shoponline.orderservice.model.Order;
 import com.shoponline.orderservice.model.OrderLineItems;
 import com.shoponline.orderservice.repository.OrderRepository;
@@ -11,6 +12,7 @@ import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.Span;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -28,6 +30,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClientBuilder;
     private final Tracer tracer;
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
     public String placeOrder(OrderRequest orderRequest){
         Order order = new Order();
@@ -60,6 +63,7 @@ public class OrderService {
 
             if(allProductsInStock) { // order will be placed only if all the products are in stock
                 orderRepository.save(order);
+                kafkaTemplate.send("notificationTopic", new OrderPlacedEvent(order.getOrderNumber()));
                 return "Order Placed Successfully!";
             }else{
                 throw new IllegalArgumentException("Product is out of stock, please try again later");
