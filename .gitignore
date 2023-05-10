@@ -23,3 +23,9 @@ log/
 
 # Compiled build folder
 build/
+
+# Data created by services
+mongo-data/
+mysql_keycloak_data/
+postgres-inventory/
+postgres-order/
